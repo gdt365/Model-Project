@@ -1,0 +1,12 @@
+#THE FIRST STUFF
+from types import SimpleNamespace
+import numpy as np
+from scipy import optimize
+
+from Consumer import ConsumerClass
+
+model = ConsumerClass(par={'sigma_B':3.0})
+
+solution = model.solve()
+
+print(solution)
