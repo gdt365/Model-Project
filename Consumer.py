@@ -105,8 +105,10 @@ class ConsumerClass():
 
         assert not np.isclose(sigma,1.0), 'sigma = 1 gives rho = 0 and a division by zero'
 
+
         z1 = np.maximum(z1,par.s_min)
         z2 = np.maximum(z2,par.s_min)
+
 
         rho = 1-1/sigma
 
@@ -136,7 +138,7 @@ class ConsumerClass():
         xB= self.ces(x2,x3,par.beta,par.sigma_B)
 
         #Nest for food and travel
-        u=self.ces(x1,xB,par.alpha,par.sigma_B)
+        u=self.ces(x1,xB,par.alpha,par.sigma_A)
 
 
         return u
@@ -161,7 +163,7 @@ class ConsumerClass():
 
                
 
-        return s1,(1-s1)*w,(1-s1)*(1-w)
+        return s1,(1-s1)*w,(1-s1)*(1-w) #always sums to 1 when s1,w are in the interval [0,1]
 
     def quantities(self,s1,w):
         """ the quantities implied by the nested shares
@@ -181,9 +183,9 @@ class ConsumerClass():
 
         s1,s2,s3 = self.shares(s1,w)
 
-        return s1*par.I/par.p1, s2*par.I/par.p2, s3*par.I/par.p3
+        return s1*par.I/par.p1, s2*par.I/par.p2, s3*par.I/par.p3 #Ensures total spending = Income
 
-    def value_of_choice(self,s1,w):
+    def value_of_choice(self,s1,w): 
         """ utility of the bundle implied by the nested shares
 
         Args:
@@ -200,7 +202,7 @@ class ConsumerClass():
 
         u = self.utility(x1,x2,x3)
 
-        return u
+        return u #returns utility associated with specific budget choice
 
     def objective(self,s):
         """ minus utility, for a minimizer
@@ -217,7 +219,7 @@ class ConsumerClass():
 
         """
 
-        return -self.value_of_choice(s[0],s[1])
+        return -self.value_of_choice(s[0],s[1]) #SciPy is for minimizing, therefore, we use -utility to find "max", s[0]=s1, s[1]=w
 
     #################
     # 3. solving it #
@@ -247,6 +249,7 @@ class ConsumerClass():
         s1_vec=np.linspace(0.0,1.0,N)
         w_vec=np.linspace(0.0,1.0,N)
 
+        #Every combination of candidate values
         s1_grid,w_grid = np.meshgrid(s1_vec,w_vec,indexing='ij')
 
 
@@ -301,7 +304,7 @@ class ConsumerClass():
             self.objective,
             s0,
             method='L-BFGS-B',
-            bounds=((0.0,1.0),(0.0,1.0)),
+            bounds=((0.0,1.0),(0.0,1.0)),#0<=s1<=1 and 0<=w<=1 
             callback= lambda sk: path.append(sk.copy()),
             **kwargs
         )
