@@ -1,0 +1,62 @@
+#THE MODEL RESULTS
+
+from types import SimpleNamespace
+import numpy as np
+from scipy import optimize
+
+
+from Consumer import ConsumerClass
+
+
+
+#Find results
+consumer=ConsumerClass()
+opt = consumer.solve()
+
+
+print("Results using L-BFGS-B:")
+#Print shares spend on each item
+print(f'Food share (s1):       {opt.s1:.4f}')
+print(f'Bus share (s2):        {opt.s2:.4f}')
+print(f'Train share (s3):      {opt.s3:.4f}')
+
+#Check shares = 1
+print(f'Share sum :            {opt.s1 + opt.s2 + opt.s3:.2f}')
+
+#Print quantities
+x1, x2, x3 = consumer.quantities(opt.s1, opt.w)
+
+print(f'Food quantity (x1):    {x1:.4f}')
+print(f'Bus quantity (x2):     {x2:.4f}')
+print(f'Train quantity (x3):   {x3:.4f}')
+
+print("Optimizer succeeded:  ", opt.res.success)
+
+#Print final utility
+print(f'Utility:               {opt.u:.4f}')
+
+print("Results using grid:")
+
+opt_grid = consumer.solve_grid()
+
+#Print shares spend on each item
+print(f'Food share (s1):       {opt_grid.s1:.4f}')
+print(f'Bus share (s2):        {opt_grid.s2:.4f}')
+print(f'Train share (s3):      {opt_grid.s3:.4f}')
+
+#Check shares = 1
+print(f'Share sum :            {opt_grid.s1 + opt_grid.s2 + opt_grid.s3:.2f}')
+
+#Print quantities
+x1, x2, x3 = consumer.quantities(opt_grid.s1, opt_grid.w)
+
+print(f'Food quantity (x1):    {x1:.4f}')
+print(f'Bus quantity (x2):     {x2:.4f}')
+print(f'Train quantity (x3):   {x3:.4f}')
+
+#Print utility 
+print(f'Utility:               {opt_grid.u:.4f}')
+
+print(opt.res.success)
+print(opt.res.message)
+
